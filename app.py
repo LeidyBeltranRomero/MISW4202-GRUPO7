@@ -5,7 +5,7 @@ from flask_restful import Api
 
 from modelos import db
 from vistas import \
-    VistaOrdenCompra, VistaOrdenesCompra
+    VistaOrdenCompra, VistaOrdenesCompra, VistaHealthCheck
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///dbapp.sqlite'
@@ -24,5 +24,6 @@ cors = CORS(app)
 api = Api(app)
 api.add_resource(VistaOrdenesCompra, '/ordenes')
 api.add_resource(VistaOrdenCompra, '/orden/<int:id_orden_compra>')
+api.add_resource(VistaHealthCheck, '/healthcheck')
 
 jwt = JWTManager(app)

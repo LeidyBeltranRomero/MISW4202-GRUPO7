@@ -1,9 +1,8 @@
+from datetime import datetime
 from flask import request
 from flask_jwt_extended import jwt_required, create_access_token
 from flask_restful import Resource
 from sqlalchemy.exc import IntegrityError
-from datetime import datetime
-import hashlib
 
 from modelos import \
     db, \
@@ -35,3 +34,11 @@ class VistaOrdenesCompra(Resource):
         db.session.add(nueva_orden)
         db.session.commit()
         return orden_compra_schema.dump(nueva_orden)
+   
+class VistaHealthCheck(Resource):
+   def get(self):
+        now = datetime.now()
+        if now.second < 40:
+            return "OK "+str(now.second), 200
+        else:
+            return "Fail "+str(now.second),500

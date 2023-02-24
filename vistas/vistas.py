@@ -15,12 +15,10 @@ product_schema = ProductSchema()
 cliente_schema = ClienteSchema()
 
 class VistaOrdenCompra(Resource):
-      
    def get(self, id_orden_compra):
         return orden_compra_schema.dump(OrdenCompra.query.get_or_404(id_orden_compra))
 
 class VistaOrdenesCompra(Resource):
-    
    def get(self):
         ordenes = OrdenCompra.query.all()
         return [orden_compra_schema.dump(orden) for orden in ordenes]
@@ -35,11 +33,26 @@ class VistaOrdenesCompra(Resource):
         db.session.add(nueva_orden)
         db.session.commit()
         return orden_compra_schema.dump(nueva_orden)
-   
-class VistaHealthCheck(Resource):
+
+class RHC(Resource):
+    count = 0
+class VistaModifyHC1(RHC):
+    def get(self):
+        nueva_orden = OrdenCompra(\
+            cliente = 1, \
+            product = 1, \
+            quantity = 2, \
+            state = "OK", \
+        )
+        db.session.add(nueva_orden)
+        db.session.commit()
+        return "OK"
+    
+class VistaHealthCheck(RHC):
    def get(self):
         now = datetime.now()
-        if now.second < 40:
-            return "OK "+str(now.second)+" - "+socket.gethostname(), 200
+        ordenes = OrdenCompra.query.all()
+        if len(ordenes) %2 == 0:
+            return "OK "+str(now.second)+" - "+socket.gethostname()+" COUNT:"+str(len(ordenes)), 200
         else:
-            return "Fail "+str(now.second)+" - "+socket.gethostname(),500
+            return "Fail "+str(now.second)+" - "+socket.gethostname()+" COUNT:"+str(len(ordenes)),500

@@ -1,4 +1,5 @@
 from datetime import datetime
+import socket
 from flask import request
 from flask_jwt_extended import jwt_required, create_access_token
 from flask_restful import Resource
@@ -39,6 +40,6 @@ class VistaHealthCheck(Resource):
    def get(self):
         now = datetime.now()
         if now.second < 40:
-            return "OK "+str(now.second), 200
+            return "OK "+str(now.second)+" - "+socket.gethostname(), 200
         else:
-            return "Fail "+str(now.second),500
+            return "Fail "+str(now.second)+" - "+socket.gethostname(),500
